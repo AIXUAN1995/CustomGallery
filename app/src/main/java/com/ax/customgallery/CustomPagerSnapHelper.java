@@ -32,7 +32,9 @@ public class CustomPagerSnapHelper extends PagerSnapHelper {
     }
 
     private int distanceToStart(@NonNull View targetView, OrientationHelper helper) {
+        //targetView的起始位置
         int childStart = helper.getDecoratedStart(targetView);
+        //容器可使用范围的起始位置
         int containerStart = helper.getStartAfterPadding();
         return childStart - containerStart;
     }

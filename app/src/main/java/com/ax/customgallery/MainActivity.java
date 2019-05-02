@@ -21,17 +21,21 @@ public class MainActivity extends AppCompatActivity {
             "http://b-ssl.duitang.com/uploads/item/201410/25/20141025181818_SSvPY.jpeg"};
     private RecyclerView recyclerView;
     private CustomGalleryAdapter adapter;
-    private String TAG = "MainActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         recyclerView = findViewById(R.id.recyclerView);
+        //设置横滑
         recyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.HORIZONTAL, false));
+        //填充数据
         adapter = new CustomGalleryAdapter(getData(), this);
         recyclerView.setAdapter(adapter);
+        //分页滑动效果
+        recyclerView.setOnFlingListener(null);
         new CustomPagerSnapHelper().attachToRecyclerView(recyclerView);
+        //滑动动画
         recyclerView.addOnScrollListener(new GalleryOnScrollListener());
     }
 
@@ -43,55 +47,5 @@ public class MainActivity extends AppCompatActivity {
             list.add(itemBean);
         }
         return list;
-    }
-
-    class GalleryOnScrollListener extends RecyclerView.OnScrollListener {
-        @Override
-        public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-            super.onScrollStateChanged(recyclerView, newState);
-        }
-
-        @Override
-        public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-            super.onScrolled(recyclerView, dx, dy);
-            if (recyclerView.getLayoutManager() instanceof LinearLayoutManager) {
-                slideInAnimation(recyclerView);
-            }
-        }
-
-        /**
-         * 当前第二页的动画
-         */
-        private void slideInAnimation(RecyclerView recyclerView) {
-            float percent = getScrollPercent(recyclerView);
-            if (percent > 0 && percent < 1) {
-                View targetView = getTargetView(recyclerView, 1);
-                if (targetView == null) {
-                    return;
-                }
-                ViewGroup.MarginLayoutParams lp = ((ViewGroup.MarginLayoutParams) targetView.getLayoutParams());
-                lp.width = (int) (DisplayUtils.getItemWidth(targetView.getContext()) * (0.85 + 0.15 * percent));
-                lp.height = (int) (DisplayUtils.getItemHeight(targetView.getContext()) * (0.85 + 0.15 * percent));
-                targetView.setLayoutParams(lp);
-            }
-        }
-
-        private float getScrollPercent(RecyclerView recyclerView) {
-            View firstItem = recyclerView.getChildAt(0);
-            if (firstItem == null) {
-                return 0;
-            }
-            LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
-            int scrollDistance = firstItem.getWidth() - layoutManager.getDecoratedRight(firstItem);
-            return scrollDistance * 1.0f / firstItem.getWidth();
-        }
-
-        private View getTargetView(RecyclerView recyclerView, int index) {
-            View view = recyclerView.getChildAt(index);
-            if (view == null) {
-                return null;
-            }
-            return view.findViewById(R.id.itemContent);
-        }
     }
 }
